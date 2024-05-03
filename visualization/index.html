@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Public Tennis Court Analysis</title>
+        <!-- Favicon-->        
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- MapBox-->
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+        <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="./js/scripts.js"></script>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">Assessing Public Tennis Courts</a>
+                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#page-top">Summary</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#analysis-report">Analysis Report</a></li>                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container">
+                <div class="row firstrow justify-content-center">
+                    <div class="col-md-6 col-lg-6 mb-5">
+                        <div id="map" class="map"></div>
+                        <script>
+                            mapboxgl.accessToken = 'pk.eyJ1IjoieWltMDMzMSIsImEiOiJjbGc4YXVmbGcwdms5M2RvNzRtN3RhZHp4In0.ktiZ8MZotOI5MjZy-6Kj2g';
+                            const map = new mapboxgl.Map({
+                            container: 'map', // container ID
+                            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+                            style: 'mapbox://styles/mapbox/streets-v12', // style URL
+                            center: [-87.629, 41.878], // starting position [lng, lat]
+                            zoom: 8 // starting zoom
+                            });
+                            loadGeoJson(map)
+                        </script>
+                        <div class="legend">
+                            Supply/Demand Ratio<br>
+                            0<br>
+                            <svg height="100" width="10">
+                              <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+                                  <stop offset="20%" style="stop-color:rgb(255,100,0);stop-opacity:1" />
+                                  <stop offset="40%" style="stop-color:rgb(255,200,0);stop-opacity:1" />
+                                  <stop offset="60%" style="stop-color:rgb(200,255,0);stop-opacity:1" />
+                                  <stop offset="80%" style="stop-color:rgb(100,255,0);stop-opacity:1" />
+                                  <stop offset="100%" style="stop-color:rgb(0,255,0);stop-opacity:1" />
+                                </linearGradient>
+                              </defs>
+                              <rect width="10" height="100" fill="url(#grad1)" />
+                            </svg>
+                            <br>1
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 mb-5 justify-content-center">
+                        <h3>Assessement</h3>
+                        <p align="left">This assessement is designed to provide insightful information into the supply-demand ratio of public tennis courts, which are important assets for the public health. The information will be valuable for informing decisions related to the development of tennis court facilities in areas with potential higher demand or availability. </p>
+                        <p align="left">Higher supply-demand ratios show that the number of existing public tennis courts exceeds the number of demanded public tennis courts in those areas. The number of demanded courts is analyzed by a statistical model based on the population and trend of tennis players. Conversely, a lower supply-demand ratio suggests a need for increased supply to meet the demand for tennis courts.</p>                        
+                        <p align="left">In this project, we aim the chicago metropolitan area as a case study of the assessment. The limitations of this project include the exclusion of certain cities due to insufficient data on population, city boundaries, and tennis court availability. </p>
+                        <h3>Analysis Summary</h3>
+                        <p align="left">Out of a total of 215 targeted cities, we assess 185 cities. Among the 185 cities, 172 cities have a supply-demand ratio of less than 1, the average supply-demand ratio is 0.449 and 9 cities do not have any tennis courts, suggesting a potential demand for more public tennis courts to meet the needs of the community.                         
+                        </p>
+                        <div class="row firstrow justify-content-center">
+                            <div class="col-md-6 col-lg-6 mx-auto justify-content-center"> 
+                                Top 5 cities of the supply-demand ratio
+                                <table border=1 style="width:100%">
+                                    <tr>
+                                        <td>Rank</td><td>City</td><td>Ratio</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td><td>Flossmoor</td><td>2.0088</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td><td>Barrington</td><td>1.6335</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td><td>Lake Forest</td><td>1.6041</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td><td>Frankfort</td><td>1.3912</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td><td>Hinsdale</td><td>1.3295</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6 col-lg-6 mx-auto justify-content-center">
+                                Bottom 5 cities of the supply-demand ratio
+                                <table border=1 style="width:100%">
+                                    <tr>
+                                        <td>Rank</td><td>City</td><td>Ratio</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td><td>Midlothian</td><td>0.0567</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td><td>Hanover Park</td><td>0.0646</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td><td>Worth</td><td>0.074</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td><td>Montgomery</td><td>0.0744</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td><td>Cicero</td><td>0.0762</td>
+                                    </tr>
+                                </table>                                
+                            </div>
+                        </div>
+                        <p align="left">The total number of tennis players in the Chicago metropolitan area serves as the foundation for determining the demand for tennis court facilities, with a count of 618902 players.</p>
+                        <p align="left">Education, wealth, age, and ethnicity are key factors that affect the number of tennis players and, subsequently, the demand for tennis courts. <br>
+                        Approximately 60.1% of the Chicago metropolitan area tennis players were between the ages of 18 to 65. <br>
+                        68.5% of tennis players in the Chicago metropolitan area identify as white, which is the largest ethnicity group.<br>
+                        Compared to the Chicago metropolitan area population, a Chicago metropolitan area tennis player was more likely to have an income of $92,338 or more<br>
+                        39.9% tennis players have college degree or higher. 
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Portfolio Section-->
+        <section class="page-section portfolio" id="analysis-report">
+            <div class="container">
+                <!-- Portfolio Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Analysis Report</h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Grid Items-->
+                <div class="row justify-content-center">
+                    <h3 class="text-center text-uppercase text-secondary mb-0">Education</h3>
+                    <p align="center">We analyze the ratio according to the education level of the population in cities</p>
+                    <div class="col-md-8 col-lg-8 mx-auto justify-content-center"> 
+                        <table border=1 style="width:100%">
+                            <tr>
+                                <td>Category</td><td>Average Supply-Demand Ratio</td>
+                            </tr>
+                            <tr>
+                                <td class="categorytd">Below average high school graduation population cities</td><td>0.256</td>
+                            </tr>
+                            <tr>
+                                <td class="categorytd">Above average of high school graduation and below average Bachelor's degree population cities</td><td>0.058</td>
+                            </tr>
+                            <tr>
+                                <td class="categorytd">Above average of Bachelor's or higher degree population cities</td><td>0.134</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p align="center">The result shows that education level is not relative to the suppy-demand ratio of the public tennis courts</p>
+                </div>
+                <div class="row justify-content-center">
+                    <h3 class="text-center text-uppercase text-secondary mb-0">Wealth</h3>
+                    <p align="center">We analyze the ratio according to the wealth status of the population in cities</p>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="wealthincome"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="wealthproperty"></div>    
+                    </div>
+                    <script type="text/javascript">wealthGraph()</script>
+                    <p align="center">The result shows the higher income city has higher suppy-demand ratio, but the property values are not relative to the ratio.</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <h3 class="text-center text-uppercase text-secondary mb-0">Age</h3>
+                    <p align="center">We analyze the ratio according to the age compositions of the population in cities</p>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="age18"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="agemiddle"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="age65"></div>    
+                    </div>
+                    <script type="text/javascript">ageGraph()</script>
+                    <p align="center">The result shows the age composition is not relative the supply-demand ratio</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <h3 class="text-center text-uppercase text-secondary mb-0">Ethnicity</h3>
+                    <p align="center">We analyze the ratio according to the ethnicity compositions of the population in cities</p>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="white"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="black"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="native"></div>    
+                    </div>                                        
+                </div>
+
+                <div class="row justify-content-center">                    
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="asian"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="pacific"></div>    
+                    </div>
+                    <div class="col-md-4 col-lg-4 mx-auto justify-content-center"> 
+                        <div id="hispanic"></div>    
+                    </div>
+                    <script type="text/javascript">ethnicityGraph()</script>
+                    <p align="center">The result shows the higher white people ratio cities have the trend of higher the supply-demand ratio. Other ethnicities are not relative the ratio.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer-->        
+        <div class="copyright py-4 text-center text-white">
+            <div class="container"><small>Copyright &copy; 2023 Albert Luu, Sang Myun Park, Sang-il Yim, TaeKyu Kang, Xiaoou Zheng.</small></div>
+        </div>
+        
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>
